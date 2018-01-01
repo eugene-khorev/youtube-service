@@ -23,6 +23,12 @@ final class Client
      */
     private $tokenRepository;
 
+    /**
+     * Client constructor
+     * @param \Youtube\TokenRepositoryInterface $tokenRepository
+     * @param string $configFile
+     * @param string $redirectUrl
+     */
     public function __construct(
             TokenRepositoryInterface $tokenRepository, 
             string $configFile, 
@@ -39,12 +45,22 @@ final class Client
         $this->service = $this->getService();
     }
 
+    /**
+     * Creates Youtube service
+     * @return \Google_Service_YouTube
+     */
     private function getService()
     {
         // Create Youtube service
         return new \Google_Service_YouTube($this->client);
     }
 
+    /**
+     * Creates Google client
+     * @param string $configFile
+     * @param string $redirectUrl
+     * @return \Google_Client
+     */
     private function getClient(string $configFile, string $redirectUrl)
     {
         // Create Google client
@@ -64,6 +80,12 @@ final class Client
         return $client;
     }
     
+    /**
+     * Makes authentication
+     * @param \Closure $getAuthCodeClosure
+     * @param \Closure $redicretClosure
+     * @return type
+     */
     public function authenticate(\Closure $getAuthCodeClosure, \Closure $redicretClosure)
     {
         // Load previously authorized credentials.
@@ -97,6 +119,9 @@ final class Client
         }
     }
     
+    /**
+     * Refreshed expired access token
+     */
     private function refreshAccessToken()
     {
         // Refresh token
@@ -117,11 +142,22 @@ final class Client
         $this->tokenRepository->setToken($accessTokenUpdated);
     }
 
+    /**
+     * Returns video rating info
+     * @param type $videoId
+     * @param type $params
+     * @return type
+     */
     public function videosGetRating($videoId, $params = [])
     {
         return $this->service->videos->getRating($videoId, $params);
     }
 
+    /**
+     * Returns channel subscription info
+     * @param type $id
+     * @return type
+     */
     public function subscriptionsListForChannelId($id)
     {
         return $this->service->subscriptions
