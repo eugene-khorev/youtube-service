@@ -23,6 +23,11 @@ class Manager
         $this->taskRepository->createTask($userId, $info['service'], $info['type'], $info['id']);
     }
     
+    /**
+     * Closes a task for a given user within a given URL
+     * @param int $userId
+     * @param string $url
+     */
     public function closeTask(int $userId, string $url)
     {
         $info = self::getTaskInfoFromUrl($url);
