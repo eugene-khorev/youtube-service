@@ -30,7 +30,7 @@ $client->authenticate(
     );
 
 // Init SQLite task repository
-$taskRepository = new Task\SqliteRepository(realpath('./tsaks.sqlite'));
+$taskRepository = new Task\SqliteRepository(realpath('./tasks.sqlite'));
 
 // Init task manager
 $taskManager = new Task\Manager($taskRepository);
