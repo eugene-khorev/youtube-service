@@ -3,6 +3,9 @@
         "google/apiclient": "^2.0"
     },
     "autoload": {
-        "psr-4": {"Youtube\\": "src/Youtube"}
+        "psr-4": {
+            "Youtube\\": "src/Youtube",
+            "Task\\": "src/Task"
+        }
     }
 }

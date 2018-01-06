@@ -29,11 +29,32 @@ $client->authenticate(
         }
     );
 
-// Get video ratings
-$ratings = $client->videosGetRating('4D03MCvb5Sc');
+// Init SQLite task repository
+$taskRepository = new Task\SqliteRepository(realpath('./tsaks.sqlite'));
 
-// Get video subscriptions
-$subscriptions = $client->subscriptionsListForChannelId('UCWnNKC1wrH_NXAXc5bhbFnA');
+// Init task manager
+$taskManager = new Task\Manager($taskRepository);
 
-var_dump($ratings, $subscriptions);
+// Create new tasks
+$userId = 123;
+$videoUrl = 'https://www.youtube.com/watch?v=4D03MCvb5Sc';
+$subscribeUrl = 'https://www.youtube.com/channel/UCWnNKC1wrH_NXAXc5bhbFnA';
 
+$taskManager->createTask($userId, $videoUrl);
+$taskManager->createTask($userId, $subscribeUrl);
+
+// Check if video is liked by user
+$videoInfo = Task\Manager::getTaskInfoFromUrl($videoUrl);
+$ratings = $client->videosGetRating($videoInfo);
+if (!empty($ratings) && isset($ratings['items']) && !empty($ratings['items'])) {
+    // Close the task
+    $taskManager->closeTask($userId, $videoUrl);
+}
+
+// Check if user subscribed to the channel
+$subscribeInfo = Task\Manager::getTaskInfoFromUrl($subscribeUrl);
+$subscriptions = $client->subscriptionsListForChannelId($subscribeInfo['id']);
+if (!empty($subscriptions) && isset($subscriptions['items']) && !empty($subscriptions['items'])) {
+    // Close the task
+    $taskManager->closeTask($userId, $subscribeUrl);
+}

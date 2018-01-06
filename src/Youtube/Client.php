@@ -120,7 +120,7 @@ final class Client
     }
     
     /**
-     * Refreshed expired access token
+     * Refreshes expired access token
      */
     private function refreshAccessToken()
     {
