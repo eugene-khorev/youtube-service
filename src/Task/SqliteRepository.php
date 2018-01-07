@@ -17,7 +17,10 @@ class SqliteRepository implements RepositoryInterface
      */
     public function __construct($dbFilename)
     {
-        $this->db = new \SQLite3($dbFilename);
+        $this->db = new \PDO('sqlite:' . $dbFilename);
+        if (!$this->db) {
+            throw new \Exception('Unable to open database file');
+        }
     }
     
     /**
@@ -25,14 +28,9 @@ class SqliteRepository implements RepositoryInterface
      */
     public function createTask(int $userId, string $service, string $type, string $entityId)
     {
-        $this->db->query
-                ("INSERT INTO `tasks` SET "
-                    . "user_id = '{$userId}', "
-                    . "service= '{$service}', "
-                    . "type = '{$type}', "
-                    . "entity_id = '{$entityId}', "
-                    . "status = " . self::STATUS_OPEN
-            );
+        /*return */$this->db->exec
+                ("INSERT INTO tasks (user_id, service, type, entity_id, status) "
+                . "VALUES('{$userId}', '{$service}', '{$type}', '{$entityId}', '" . self::STATUS_OPEN . "')");
     }
 
     /**
@@ -40,8 +38,8 @@ class SqliteRepository implements RepositoryInterface
      */
     public function closeTask(int $userId, string $service, string $type, string $entityId)
     {
-        $this->db->query
-                ("UPDATE `tasks` SET "
+        return $this->db->exec
+                ("UPDATE tasks SET "
                     . "status = " . self::STATUS_CLOSED
                 . " WHERE "
                     . "user_id = '{$userId}' AND "

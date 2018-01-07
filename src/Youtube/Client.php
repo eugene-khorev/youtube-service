@@ -142,6 +142,14 @@ final class Client
         $this->tokenRepository->setToken($accessTokenUpdated);
     }
 
+    public function cannelsListByUsername($userName)
+    {
+        return $this->service->channels->listChannels(
+                'snippet,contentDetails,statistics',
+                ['forUsername' => $userName]
+            );
+    }
+    
     /**
      * Returns video rating info
      * @param type $videoId

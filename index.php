@@ -33,28 +33,23 @@ $client->authenticate(
 $taskRepository = new Task\SqliteRepository(realpath('./tasks.sqlite'));
 
 // Init task manager
-$taskManager = new Task\Manager($taskRepository);
+$taskManager = new Task\Manager($taskRepository, $client);
 
 // Create new tasks
 $userId = 123;
 $videoUrl = 'https://www.youtube.com/watch?v=4D03MCvb5Sc';
-$subscribeUrl = 'https://www.youtube.com/channel/UCWnNKC1wrH_NXAXc5bhbFnA';
+$subscribeUrl = 'https://www.youtube.com/user/AcademeG';
+//$subscribeUrl = 'https://www.youtube.com/channel/UCWnNKC1wrH_NXAXc5bhbFnA';
 
 $taskManager->createTask($userId, $videoUrl);
 $taskManager->createTask($userId, $subscribeUrl);
 
-// Check if video is liked by user
-$videoInfo = Task\Manager::getTaskInfoFromUrl($videoUrl);
-$ratings = $client->videosGetRating($videoInfo['id']);
-if (!empty($ratings) && isset($ratings['items']) && !empty($ratings['items'])) {
-    // Close the task
+// Close video task if it's completed
+if ($taskManager->isTaskCompleted($videoUrl)) {
     $taskManager->closeTask($userId, $videoUrl);
 }
 
-// Check if user subscribed to the channel
-$subscribeInfo = Task\Manager::getTaskInfoFromUrl($subscribeUrl);
-$subscriptions = $client->subscriptionsListForChannelId($subscribeInfo['id']);
-if (!empty($subscriptions) && isset($subscriptions['items']) && !empty($subscriptions['items'])) {
-    // Close the task
+// Close subscription task if it's completed
+if ($taskManager->isTaskCompleted($subscribeUrl)) {
     $taskManager->closeTask($userId, $subscribeUrl);
 }
