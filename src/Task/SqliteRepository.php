@@ -28,7 +28,7 @@ class SqliteRepository implements RepositoryInterface
      */
     public function createTask(int $userId, string $service, string $type, string $entityId)
     {
-        /*return */$this->db->exec
+        return $this->db->exec
                 ("INSERT INTO tasks (user_id, service, type, entity_id, status) "
                 . "VALUES('{$userId}', '{$service}', '{$type}', '{$entityId}', '" . self::STATUS_OPEN . "')");
     }
