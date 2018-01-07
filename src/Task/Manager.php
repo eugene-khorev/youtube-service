@@ -4,6 +4,11 @@ namespace Task;
 
 class Manager
 {
+
+    const SERVICE_YOUTUBE = 'youtube';
+    
+    const TYPE_LIKE = 'like';
+    const TYPE_SUBSCRIPTION = 'subscription';
     
     /**
      * Task repository
@@ -60,7 +65,7 @@ class Manager
         $info = self::getTaskInfoFromUrl($url);
         
         switch ($info['service']) {
-            case 'youtube':
+            case self::SERVICE_YOUTUBE:
                 return $this->isYoutubeTaskCompleted($info['type'], $info['id']);
             
             default:
@@ -78,7 +83,7 @@ class Manager
     {
         // Run an API request depending on the task type
         switch ($type) {
-            case 'like':
+            case self::TYPE_LIKE:
                 $ratings = $this->youtubeClient->videosGetRating($id);
                 return (
                         !empty($ratings) && 
@@ -86,7 +91,7 @@ class Manager
                         !empty($ratings['items'])
                     );
             
-            case 'subscription':
+            case self::TYPE_SUBSCRIPTION:
                 $subscriptions = $this->youtubeClient->subscriptionsListForChannelId($id);
                 return (
                         !empty($subscriptions) && 
@@ -140,8 +145,8 @@ class Manager
         // Check if this is video URL
         if ($path == '/watch' && isset($query['v'])) {
             return [
-                'service' => 'youtube',
-                'type' => 'like',
+                'service' => self::SERVICE_YOUTUBE,
+                'type' => self::TYPE_LIKE,
                 'id' => $query['v'],
             ];
         }
@@ -149,8 +154,8 @@ class Manager
         // Check if this is channel URL
         if (preg_match('/^\/channel\/([^\/?]+)/', $path, $matches)) {
             return [
-                'service' => 'youtube',
-                'type' => 'subscription',
+                'service' => self::SERVICE_YOUTUBE,
+                'type' => self::TYPE_SUBSCRIPTION,
                 'id' => $matches[1],
             ];
         }
@@ -164,8 +169,8 @@ class Manager
             }
             
             return [
-                'service' => 'youtube',
-                'type' => 'subscription',
+                'service' => self::SERVICE_YOUTUBE,
+                'type' => self::TYPE_SUBSCRIPTION,
                 'id' => $channelInfo['items'][0]['id'],
             ];
         }
